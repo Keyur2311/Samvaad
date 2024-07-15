@@ -15,7 +15,7 @@ export const SocketContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (authUser) {
-      const socket = io("https://samvaaad.netlify.app/", {
+      const socket = io("https://localhost:5000", {
         query: {
           userId: authUser._id,
         },
