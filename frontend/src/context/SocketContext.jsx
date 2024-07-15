@@ -15,7 +15,7 @@ export const SocketContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (authUser) {
-      const socket = io("https://samvaad-9me6.onrender.com", {
+      const socket = io("https://samvaaad.netlify.app/", {
         query: {
           userId: authUser._id,
         },
