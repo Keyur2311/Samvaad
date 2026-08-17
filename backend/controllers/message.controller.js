@@ -1,6 +1,6 @@
 import Conversation from "../models/conversation.model.js";
 import Message from "../models/message.model.js";
-import { getReceiverSocketId, io } from "../socket/socket.js";
+import { getReceiverSocketIds, io } from "../socket/socket.js";
 
 export const sendMessage = async (req, res) => {
 	try {
@@ -35,11 +35,11 @@ export const sendMessage = async (req, res) => {
 		await Promise.all([conversation.save(), newMessage.save()]);
 
 		// SOCKET IO FUNCTIONALITY WILL GO HERE
-		const receiverSocketId = getReceiverSocketId(receiverId);
-		if (receiverSocketId) {
+		// deliver to every socket of the receiver (multiple tabs/devices)
+		getReceiverSocketIds(receiverId).forEach((socketId) => {
 			// io.to(<socket_id>).emit() used to send events to specific client
-			io.to(receiverSocketId).emit("newMessage", newMessage);
-		}
+			io.to(socketId).emit("newMessage", newMessage);
+		});
 
 		res.status(201).json(newMessage);
 	} catch (error) {
@@ -57,11 +57,13 @@ export const getMessages = async (req, res) => {
 			participants: { $all: [senderId, userToChatId] },
 		}).populate("messages"); // NOT REFERENCE BUT ACTUAL MESSAGES
 
-		if (!conversation) return res.status(200).json([]);
+		if (!conversation) return res.status(200).json({ messages: [], readUpTo: null });
 
-		const messages = conversation.messages;
+		// when did the OTHER person last look at this chat?
+		// undefined (old conversations) → null → "never" → gray ticks
+		const readUpTo = conversation.lastRead?.get(userToChatId) ?? null;
 
-		res.status(200).json(messages);
+		res.status(200).json({ messages: conversation.messages, readUpTo });
 	} catch (error) {
 		console.log("Error in getMessages controller: ", error.message);
 		res.status(500).json({ error: "Internal server error" });

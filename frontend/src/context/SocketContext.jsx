@@ -11,7 +11,7 @@ export const useSocketContext = () => {
 // In dev, socket connects to the local backend; in production (Vercel) it
 // connects directly to the Render backend (WebSockets can't go through
 // the Vercel /api rewrite). Set VITE_SOCKET_URL in Vercel env vars.
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5000";
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5050";
 
 export const SocketContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
