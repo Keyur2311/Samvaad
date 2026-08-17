@@ -8,6 +8,11 @@ export const useSocketContext = () => {
   return useContext(SocketContext);
 };
 
+// In dev, socket connects to the local backend; in production (Vercel) it
+// connects directly to the Render backend (WebSockets can't go through
+// the Vercel /api rewrite). Set VITE_SOCKET_URL in Vercel env vars.
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5000";
+
 export const SocketContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
@@ -15,7 +20,7 @@ export const SocketContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (authUser) {
-      const socket = io("https://samvaad-9me6.onrender.com/", {
+      const socket = io(SOCKET_URL, {
         query: {
           userId: authUser._id,
         },

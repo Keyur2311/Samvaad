@@ -1,12 +1,12 @@
 {
-	"name": "chat-app-yt",
+	"name": "samvaad",
 	"version": "1.0.0",
-	"description": "",
-	"main": "server.js",
+	"description": "Samvaad - real-time chat app (API server)",
+	"main": "backend/server.js",
 	"scripts": {
 		"server": "nodemon backend/server.js",
 		"start": "node backend/server.js",
-		"build": "npm install && npm install --prefix frontend && npm run build --prefix frontend"
+		"build": "npm install"
 	},
 	"type": "module",
 	"keywords": [],
